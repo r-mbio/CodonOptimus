@@ -1,0 +1,6 @@
+>GFP|Green_fluorescent_protein|Aequorea_victoria|UniProt_P42212|positions_1-20_N-terminal_fragment
+MSKGEELFTGVVPILVELDGD
+>DHFR_fragment|Dihydrofolate_reductase|E.coli|UniProt_P0ABQ4|positions_1-30
+MISLIAALAVDRVIGMENAMPWNLPADLAWF
+>test_minimal|custom_6AA_smoke_test
+MKLVFN

@@ -1,0 +1,30 @@
+# CodonOptimus — Python dependencies
+# Tested with Python 3.12, CUDA 12.4
+
+# Core deep learning (install CUDA variant separately if needed):
+#   pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+torch>=2.6.0
+
+# Data / science
+numpy>=2.0
+pandas>=2.0
+scipy>=1.13
+scikit-learn>=1.4
+
+# Plotting (figures only)
+matplotlib>=3.10
+seaborn>=0.13
+
+# Bioinformatics
+biopython>=1.84
+
+# Spreadsheet I/O (for supplementary table scripts)
+openpyxl>=3.1
+
+# Codon metrics
+python-codon-adaptation-index>=1.1      # provides the 'CAI' package
+
+# mRNA secondary structure (figures / generation scripts)
+# Install via conda:  conda install -c conda-forge viennarna
+# or:                 pip install ViennaRNA
+ViennaRNA>=2.6

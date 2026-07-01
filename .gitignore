@@ -1,0 +1,26 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+*.egg-info/
+dist/
+build/
+.ipynb_checkpoints/
+figures/*.png
+figures/*.pdf
+figures/*.svg
+
+# Large data/model directories — deposited on Zenodo, not stored in this repo.
+# Download from the Zenodo DOI in the README and place at the repo root.
+# Patterns listed both with and without trailing slash to catch symlinks.
+data
+data/
+models
+models/
+other_optimizers
+other_optimizers/
+results
+results/
+logs
+logs/
