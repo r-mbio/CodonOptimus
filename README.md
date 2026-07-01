@@ -305,4 +305,9 @@ Nucleic Acids Research, [doi to be added].
 
 ## Licence
 
-[To be filled before publication]
+CodonOptimus is released under the **PolyForm Noncommercial License 1.0.0** (see
+[LICENSE](LICENSE)).
+
+- **Academic and non-profit research:** free to use, modify, and distribute.
+- **Commercial use** (for-profit companies, commercial products or services):
+  contact M.Puri@massey.ac.nz for licensing.
