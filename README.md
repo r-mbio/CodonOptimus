@@ -138,7 +138,7 @@ mv ncbi_dataset/data/GCF_000146045.2/genomic.gff \
 ## Data & models
 
 Model weights, processed training data, benchmark results, and A-site profiles
-are deposited at **[ZENODO DOI — to be added before publication]**.
+are deposited at **https://doi.org/10.6084/m9.figshare.32847818** (PolyForm Noncommercial License 1.0.0).
 
 Download and unpack so the repository looks like this:
 
