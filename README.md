@@ -5,7 +5,7 @@ supervision and dual-head expression/A-site prediction.
 
 Associated manuscript: **"CodonOptimus: a foundation model for industrial codon
 optimisation with ribosome-profiling supervision and experimental validation"**
-(Nucleic Acids Research, 2026).
+(under review).
 
 ---
 
@@ -341,7 +341,7 @@ Pre-generated sequences for each tool are deposited in `other_optimizers/` (see 
 ```
 Sathyamoorthy R. et al. (2026). CodonOptimus: a ribosome-profiling-supervised
 foundation model for codon optimisation and recombinant protein production in
-microbial cell factories. Nucleic Acids Research, [doi to be added].
+microbial cell factories. (manuscript under review)
 ```
 
 ---
