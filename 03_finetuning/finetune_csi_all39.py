@@ -8,7 +8,7 @@ Speed optimisations vs original:
   - TSV loaded once with pandas, split by organism in memory
 
 Pipeline:
-  1. Load data/pretrain/all_industrial_cds.tsv (2M seqs, 39 orgs)
+  1. Load data/pretrain/all_industrial_cds.tsv (1.8M seqs, 39 orgs)
   2. Per organism (parallel): build genomic CSI weights, take top-10% by CSI
   3. Pool all top-10% seqs across 39 orgs (~174K total)
   4. Fine-tune ALL layers (CT-style), batch=2048, grad_ckpt, LR=1e-5

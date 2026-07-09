@@ -47,13 +47,13 @@ construction and verified post-generation (raises `RuntimeError` on any mismatch
 so incorrect output is impossible to miss).
 
 All 39 supported organism keys (training data spans all publicly available
-assemblies of the taxon; organisms with Ribo-seq supervision are marked †):
+assemblies of the taxon; organisms with Ribo-seq supervision are marked †; ‡ = Ribo-seq feeds dual-head model only, not the sequence generator):
 
 | `--org` key | Scientific name | Common strain / notes |
 |---|---|---|
 | `ecoli` † | *Escherichia coli* | K-12 MG1655 (RS-FT); 500 RefSeq complete assemblies |
 | `bacillus` † | *Bacillus subtilis* | 168 (RS-FT); all RefSeq complete assemblies |
-| `s_cerevisiae` † | *Saccharomyces cerevisiae* | S288C (dual-head only); all assemblies |
+| `s_cerevisiae` †‡ | *Saccharomyces cerevisiae* | S288C; all assemblies |
 | `pichia` † | *Komagataella phaffii* | CBS 7435 (RS-FT, GSE159336 AOX1); all *Komagataella* assemblies |
 | `yarrowia` | *Yarrowia lipolytica* | W29 / CLIB89; all assemblies |
 | `trichoderma` | *Trichoderma reesei* | RUT-C30; all assemblies |
@@ -282,23 +282,38 @@ python3 06_figures/plot_S*.py                    # Supplementary figures
 
 ---
 
+## Comparison tools (benchmarking baselines)
+
+CodonOptimus is benchmarked against the following codon optimisation tools in Stage 05.
+Pre-generated sequences for each tool are deposited in `other_optimizers/` (see data deposit).
+
+| Tool | Reference | Notes |
+|---|---|---|
+| **CodonTransformer** | Roodgar et al. 2024, *Nat. Mach. Intell.* | Transformer-based, 164 organisms |
+| **IDT** (Freq.-based) | Integrated DNA Technologies codon optimiser | Frequency-based commercial tool |
+| **Twist Bioscience** | Twist Bioscience codon optimiser | Frequency-based commercial tool |
+| **GenScript** | GenScript OptimumGene™ | Proprietary scoring function |
+| **Wild-type (WT)** | NCBI RefSeq native CDS | Unoptimised baseline |
+
+---
+
 ## Ribo-seq data sources
 
 | Organism | GEO / BioProject | Condition | Use |
 |---|---|---|---|
 | E. coli | PRJNA1335396 + PRJNA906596 | Normal growth, MG1655 | dual-head + RS-FT |
-| K. phaffii | GSE159336 | AOX1-induced (recombinant expression) | dual-head + RS-FT |
+| K. phaffii | GSE159336 + SRR32315787/88 | AOX1-induced + YPD growth | dual-head + RS-FT |
 | S. cerevisiae | GSE56622 + GSE185286 + GSE185458 | YPD growth | dual-head |
-| B. subtilis | GSE249448 | Exponential growth | dual-head + RS-FT |
+| B. subtilis | GSE126234 + GSE249448 | LB exponential + exponential growth | expression training + dual-head + RS-FT |
 
 ---
 
 ## Citation
 
 ```
-Sathyamoorthy R. et al. (2026). CodonOptimus: a foundation model for industrial
-codon optimisation with ribosome-profiling supervision and experimental validation.
-Nucleic Acids Research, [doi to be added].
+Sathyamoorthy R. et al. (2026). CodonOptimus: a ribosome-profiling-supervised
+foundation model for codon optimisation and recombinant protein production in
+microbial cell factories. Nucleic Acids Research, [doi to be added].
 ```
 
 ---

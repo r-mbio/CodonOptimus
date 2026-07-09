@@ -442,11 +442,6 @@ fig.legend(handles=handles, loc='lower center', ncol=3, fontsize=10.0,
            frameon=False, bbox_to_anchor=(0.5, -0.02))
 
 
-fig.suptitle(
-    'CodonOptimus tAI and CSI benchmark — 4 main host organisms\n'
-    'Rows A–D: tRNA Adaptation Index  |  Rows E–H: Codon Similarity Index',
-    fontsize=12.5, y=0.97
-)
 
 fig.savefig(OUT,  dpi=200, bbox_inches='tight')
 fig.savefig(OUTP, dpi=300, bbox_inches='tight')

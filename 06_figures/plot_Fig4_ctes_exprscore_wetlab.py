@@ -268,21 +268,69 @@ ax_c.set_title('Wet-lab validation\n$\\it{K.\\ phaffii}$, BLG, n=5 clones',
 ax_c.text(-0.32, 1.08, 'C', transform=ax_c.transAxes,
           fontsize=17, fontweight='bold', ha='left', va='bottom')
 
-# ── Panel D: SDS-PAGE placeholder ─────────────────────────────────────────────
+# ── Panel D: SDS-PAGE Coomassie gel ───────────────────────────────────────────
 ax_d = fig.add_subplot(gs_BC[2])
-ax_d.set_xlim(0, 1); ax_d.set_ylim(0, 1)
-ax_d.set_facecolor('#F5F5F5')
+from PIL import Image as _PIL_Image
+_gel_path = BASE / 'figures' / 'gel_sdspage_kphaffii.jpg'
+_gel_raw = _PIL_Image.open(_gel_path).convert('RGB')
+# Crop: remove top clamp area, keep gel body
+_gel_crop = _gel_raw.crop((0, 30, _gel_raw.width, _gel_raw.height - 10))
+_gel_img = np.array(_gel_crop)
+ax_d.imshow(_gel_img, aspect='auto')
+ax_d.set_xticks([]); ax_d.set_yticks([])
 for spine in ax_d.spines.values():
     spine.set_visible(True)
-    spine.set_edgecolor('#BBBBBB')
-    spine.set_linewidth(1.3)
-ax_d.set_xticks([]); ax_d.set_yticks([])
-ax_d.text(0.5, 0.52, 'SDS-PAGE', ha='center', va='center',
-          fontsize=14, color='#BBBBBB', style='italic')
-ax_d.text(0.5, 0.42, '(gel image)', ha='center', va='center',
-          fontsize=12, color='#CCCCCC', style='italic')
-ax_d.set_title('$\\it{K.\\ phaffii}$ X33 supernatant',
-               fontsize=13.5, pad=8, style='italic')
+    spine.set_edgecolor('#888888')
+    spine.set_linewidth(0.8)
+
+# Lane label positions — marker is in the centre of the gel (x≈520/1026≈0.507)
+# Left half: IDT, CO RS ×2, BLG std | Centre: M | Right: Empty vector, PBS
+_W = _gel_raw.width  # 1026
+_lane_labels = [
+    (100/_W,  'IDT'),
+    (220/_W,  'CO\nRS'),
+    (340/_W,  'CO\nRS'),
+    (450/_W,  'BLG\nstd'),
+    (520/_W,  'M'),
+    (680/_W,  'Empty\nvector'),
+    (820/_W,  'PBS'),
+]
+for xn, lbl in _lane_labels:
+    col = ('#1565C0' if 'CO' in lbl
+           else '#555555' if lbl == 'M'
+           else '#1a1a1a')
+    ax_d.text(xn, -0.04, lbl, transform=ax_d.transAxes,
+              ha='center', va='top', fontsize=6.5, color=col,
+              fontweight='bold' if 'CO' in lbl else 'normal')
+
+# ── Ladder (Bio-Rad Precision Plus Dual Color) kDa annotations ────────────────
+# Band y-fracs from pixel scan of marker strip (imshow origin=upper → y_frac 1=top)
+_ladder = [
+    (250, 0.862), (150, 0.804), (100, 0.752),
+    ( 75, 0.726), ( 50, 0.629), ( 37, 0.554),
+    ( 25, 0.458), ( 20, 0.388), ( 15, 0.300), ( 10, 0.221),
+]
+_mkr_x  = 520 / _W   # marker lane centre (axes fraction)
+_lbl_x  = _mkr_x - 0.04   # label right-edge just left of marker
+for kda, yf in _ladder:
+    ax_d.text(_lbl_x, yf, f'{kda}', transform=ax_d.transAxes,
+              ha='right', va='center', fontsize=6, color='#111111',
+              fontfamily='monospace',
+              bbox=dict(boxstyle='square,pad=0.05', facecolor='white',
+                        edgecolor='none', alpha=0.75))
+    # tick from label to marker lane left edge
+    ax_d.plot([_lbl_x + 0.002, _mkr_x - 0.018], [yf, yf],
+              transform=ax_d.transAxes, color='#444444', lw=0.7, clip_on=False)
+
+# BLG band arrow — points into sample lanes on left half (y_frac ≈ 0.33, between 15–20 kDa)
+ax_d.annotate('~18 kDa\n(BLG)', xy=(0.30, 0.33), xycoords='axes fraction',
+              xytext=(0.06, 0.18), textcoords='axes fraction',
+              fontsize=7, color='#CC0000',
+              arrowprops=dict(arrowstyle='->', color='#CC0000', lw=1.0),
+              ha='left', va='top')
+
+ax_d.set_title('$\\it{K.\\ phaffii}$ X33 supernatant\n(Coomassie SDS-PAGE)',
+               fontsize=11.5, pad=6, style='italic')
 ax_d.text(-0.12, 1.08, 'D', transform=ax_d.transAxes,
           fontsize=17, fontweight='bold', ha='left', va='bottom')
 

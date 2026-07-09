@@ -401,10 +401,6 @@ fig.legend(handles=prot_handles,loc='lower center',ncol=4,
            bbox_to_anchor=(0.50,0.005),fontsize=7.5,frameon=True,
            framealpha=0.95,edgecolor='#CCC',handlelength=1.2)
 
-fig.suptitle(
-    'CodonOptimus generates host-compatible codon pair contexts\n'
-    'that commercial tools and CodonTransformer systematically fail to reproduce',
-    fontsize=10,y=0.96,style='italic')
 
 fig.savefig(OUT_PNG,dpi=300,bbox_inches='tight')
 fig.savefig(OUT_PDF,bbox_inches='tight')

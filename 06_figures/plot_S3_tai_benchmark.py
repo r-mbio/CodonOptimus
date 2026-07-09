@@ -177,9 +177,6 @@ for pg_idx, page_orgs in enumerate(pages):
             sp.set_linewidth(0.9)
         ax.tick_params(axis='x', labelsize=8.5)
 
-        if idx == 0:
-            ax.text(-0.28, 1.12, 'A', transform=ax.transAxes,
-                    fontsize=16, fontweight='bold')
 
     for idx in range(n_orgs, n_rows * N_COLS):
         axes_grid[idx].set_visible(False)
@@ -190,13 +187,6 @@ for pg_idx, page_orgs in enumerate(pages):
     fig.legend(handles=handles, loc='lower center', ncol=4, fontsize=10.0,
                frameon=False, bbox_to_anchor=(0.5, 0.0))
 
-    fig.suptitle(
-        f'Supplementary Figure — CodonOptimus tAI benchmark: additional industrial host organisms '
-        f'(page {page_num} of {len(pages)})\n'
-        'tAI tables from NCBI RefSeq tRNA annotations.  '
-        'Shared y-axis per page.  ▲ CO above / ▼ CO below top-10% cutoff.',
-        fontsize=10.5, style='italic', y=1.01,
-    )
 
     for ext in ['png', 'pdf', 'svg']:
         out = BASE / f'figures/figS3_tai_p{page_num}.{ext}'

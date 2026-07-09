@@ -224,12 +224,6 @@ for ci, org in enumerate(ORG_ORDER):
     add_label(ax, chr(75 + ci))   # K, L, M, N
 
 # ─── Supertitle ───────────────────────────────────────────────────────────────
-fig.suptitle(
-    'Supplementary Figure — Ribo-seq Data Quality: Post-Correction\n'
-    r'Rows: (A–D) raw expression distribution  |  (E–H) $\log_2$ distribution  |  '
-    '(I–J) dataset comparison  |  (K–N) Q–Q normality check',
-    fontsize=9.5, y=0.975, color='#222',
-)
 
 fig.savefig(OUT,  dpi=200, bbox_inches='tight')
 fig.savefig(OUTP, dpi=300, bbox_inches='tight')

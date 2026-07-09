@@ -434,13 +434,6 @@ for pg_idx, page_orgs in enumerate(pages):
     fig.legend(handles=handles, loc='lower center', ncol=4, fontsize=10.0,
                frameon=False, bbox_to_anchor=(0.5, 0.0))
 
-    fig.suptitle(
-        f'Supplementary Figure — CodonOptimus CSI benchmark: all 39 organisms '
-        f'(page {page_num} of {n_pages})\n'
-        'CSI built from native pretrain sequences.  '
-        'Shared y-axis per page.  ▲ CO above / ▼ CO below top-10% cutoff.',
-        fontsize=10.5, style='italic', y=1.01,
-    )
 
     for ext in ['png', 'pdf', 'svg']:
         out = BASE / f'figures/figS4_csi_p{page_num}.{ext}'

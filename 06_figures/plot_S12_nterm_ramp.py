@@ -259,10 +259,6 @@ for ax, cfg in zip(axes, ORG_CFG):
     if mean_ct is not None:
         print(f'  CT:               ramp={mean_ct[:30].mean():.4f} body={mean_ct[30:].mean():.4f} ratio={mean_ct[30:].mean()/mean_ct[:30].mean():.4f}')
 
-fig.suptitle(
-    'Supplementary Figure: N-terminal codon ramp in eukaryotic high-expression genes',
-    fontsize=10.5, fontweight='bold', y=1.02
-)
 
 plt.tight_layout()
 out_png = BASE/'figures/figS12_nterm_ramp.png'

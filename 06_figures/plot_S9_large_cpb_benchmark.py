@@ -130,11 +130,6 @@ fig.legend(handles=handles, loc='lower center', bbox_to_anchor=(0.5, -0.01),
            ncol=2, fontsize=12, frameon=False,
            handlelength=1.5, handletextpad=0.6)
 
-fig.suptitle(
-    'CodonOptimus achieves superior codon pair bias across 489 industrially relevant proteins\n'
-    '(n = 489 proteins per organism per tool)',
-    fontsize=11.5, y=1.01, color='#222'
-)
 fig.savefig(OUT,  dpi=300, bbox_inches='tight')
 fig.savefig(OUTP, dpi=300, bbox_inches='tight')
 fig.savefig(OUTS, format='svg', bbox_inches='tight')

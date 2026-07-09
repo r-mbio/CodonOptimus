@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CodonOptimus — MLM pre-training on 2M industrial organism CDS sequences.
+CodonOptimus — MLM pre-training on 1.8M industrial organism CDS sequences.
 
 Architecture advantages over CodonTransformer (BigBird):
   1. Exact FlashAttention (SDPA) vs BigBird's block-sparse approximate attention

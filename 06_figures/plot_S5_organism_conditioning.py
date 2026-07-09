@@ -254,9 +254,7 @@ legend_handles = [
     mpatches.Patch(facecolor=COLOR_WITHOUT, alpha=0.75, label='Without organism token'),
 ]
 ax.legend(handles=legend_handles, fontsize=10, frameon=False,
-          loc='lower center', bbox_to_anchor=(0.5, 1.02), ncol=2)
-
-ax.set_title('Organism conditioning ablation', fontsize=13, fontweight='bold', pad=38)
+          loc='lower center', bbox_to_anchor=(0.5, -0.08), ncol=2)
 
 plt.tight_layout()
 out_png = BASE / 'figures/figS5_organism_conditioning.png'

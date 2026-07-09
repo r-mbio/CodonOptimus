@@ -272,8 +272,6 @@ for ax, (metric, ylabel, panel, note, direction) in zip(axes, PANEL_CFG):
               edgecolor='#ccc', ncol=3, loc='upper center',
               bbox_to_anchor=(0.5, -0.14))
 
-fig.suptitle('Supplementary Figure: Problematic sequence motif analysis across tools',
-             fontsize=11, fontweight='bold', y=1.01)
 
 plt.savefig(BASE/'figures/figS10_motif_avoidance.png', dpi=300, bbox_inches='tight')
 plt.savefig(BASE/'figures/figS10_motif_avoidance.pdf', bbox_inches='tight')

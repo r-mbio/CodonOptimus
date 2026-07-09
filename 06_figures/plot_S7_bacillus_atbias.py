@@ -226,10 +226,6 @@ ax_c.text(-0.22, 1.05, 'C', transform=ax_c.transAxes,
           fontsize=14, fontweight='bold', ha='left', va='bottom')
 
 # ── Supertitle ─────────────────────────────────────────────────────────────────
-fig.suptitle(
-    'Organism-specific specialist fine-tuning corrects AT-bias in $\\it{B.\\ subtilis}$',
-    fontsize=12, y=1.03, color='#222'
-)
 
 OUTS = BASE / 'figures/figS7_bacillus_atbias.svg'
 fig.savefig(OUT,  dpi=200, bbox_inches='tight')

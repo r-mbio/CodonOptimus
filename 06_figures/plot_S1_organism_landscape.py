@@ -340,10 +340,6 @@ ax2d.text(-0.05, 1.35, 'B', transform=ax2d.transAxes,
           ha='left', va='bottom', fontsize=18, fontweight='bold')
 
 # ── Save ──────────────────────────────────────────────────────────────────────
-plt.suptitle(
-    'Supplementary Figure S1 — CodonOptimus foundation model learns '
-    'organism-specific codon landscapes reflecting evolutionary relationships',
-    fontsize=12, style='italic', y=1.02)
 
 fig.savefig(OUT,  dpi=300, bbox_inches='tight')
 fig.savefig(OUTP, dpi=300, bbox_inches='tight')

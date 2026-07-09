@@ -83,15 +83,9 @@ patches = [
     mpatches.Patch(color=C_LOW, label='ep11 backbone'),
 ]
 ax.legend(handles=patches, fontsize=8.5, frameon=True, framealpha=0.9,
-          edgecolor='#CCC', loc='upper left')
+          edgecolor='#CCC', loc='lower center', bbox_to_anchor=(0.5, -0.12), ncol=2)
 
-ax.set_title(
-    'Dual-head expression predictor: codon → Ribo-seq TE\n'
-    'R² measures how well synonymous codon identity alone predicts translation efficiency',
-    fontsize=10.5, pad=10, color='#333'
-)
-
-plt.tight_layout(rect=[0, 0.05, 1, 1])
+plt.tight_layout(rect=[0, 0.10, 1, 1])
 fig.savefig(OUT,  dpi=200, bbox_inches='tight')
 fig.savefig(OUTP, dpi=300, bbox_inches='tight')
 fig.savefig(OUTS, format='svg', bbox_inches='tight')

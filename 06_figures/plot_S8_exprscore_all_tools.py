@@ -18,8 +18,9 @@ from scipy import stats
 
 BASE = Path(__file__).resolve().parent.parent
 DF   = pd.read_csv(BASE / 'results' / 'benchmark_consistent_v4.csv')
-OUT  = BASE / 'figures' / 'figS8_exprscore_all_tools.png'
+OUT    = BASE / 'figures' / 'figS8_exprscore_all_tools.png'
 OUTPDF = BASE / 'figures' / 'figS8_exprscore_all_tools.pdf'
+OUTSVG = BASE / 'figures' / 'figS8_exprscore_all_tools.svg'
 
 plt.rcParams.update({
     'font.family':'sans-serif','font.sans-serif':['Arial','DejaVu Sans'],
@@ -117,16 +118,14 @@ for col, (org, org_label, unreliable, note) in enumerate(ORG_INFO):
 handles = [mpatches.Patch(facecolor=TOOL_COLORS[t], edgecolor='#555', lw=0.5,
                            alpha=0.85, label=t) for t in TOOL_ORDER
            if t in TOOL_COLORS]
-fig.legend(handles=handles, loc='upper center', ncol=7,
-           bbox_to_anchor=(0.5, 1.03), fontsize=8.5,
+fig.legend(handles=handles, loc='lower center', ncol=7,
+           bbox_to_anchor=(0.5, -0.08), fontsize=8.5,
            framealpha=0.95, edgecolor='#ddd', handlelength=1.2)
 
-fig.suptitle(
-    'ExprScore (dual-head Ribo-seq expression predictor) applied to all tools — '
-    'K. phaffii is the primary validated panel',
-    fontsize=8.5, style='italic', y=1.09, color='#444'
-)
-
+plt.tight_layout(rect=[0, 0.08, 1, 1])
 fig.savefig(OUT,    dpi=200, bbox_inches='tight')
 fig.savefig(OUTPDF, dpi=200, bbox_inches='tight')
+fig.savefig(OUTSVG, format='svg', bbox_inches='tight')
 print(f'Saved → {OUT}')
+print(f'Saved → {OUTPDF}')
+print(f'Saved → {OUTSVG}')

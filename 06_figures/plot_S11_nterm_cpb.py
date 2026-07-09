@@ -243,12 +243,6 @@ fig.legend(handles=h_viol + [h_ref] + h_prot,
            fontsize=8.5, frameon=True, framealpha=0.95,
            edgecolor='#CCC', handlelength=1.6, columnspacing=1.0)
 
-fig.suptitle(
-    'Supplementary Figure — N-terminal codon pair bias (first 30 codons)\n'
-    'Panel A: 100 native highly-expressed genes per organism  ·  '
-    'Panel B: 4 heterologous benchmark proteins',
-    fontsize=10, y=0.97, style='italic'
-)
 
 fig.savefig(OUT_PNG, dpi=300, bbox_inches='tight')
 fig.savefig(OUT_PDF, bbox_inches='tight')
