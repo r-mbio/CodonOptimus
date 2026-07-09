@@ -240,15 +240,15 @@ python3 02_foundation_pretraining/train_mlm_industrial.py
 python3 03_finetuning/finetune_csi_all39.py
 
 # RS-FT generators (one per organism with Ribo-seq data)
-python3 03_finetuning/retrain_ecoli_rs_genuine_riboseq.py
-python3 03_finetuning/retrain_bacillus_rs_gse249448.py
-python3 03_finetuning/retrain_pichia_rs_genuine_riboseq.py
+python3 03_finetuning/finetune_ecoli_rs.py
+python3 03_finetuning/finetune_bacillus_rs.py
+python3 03_finetuning/finetune_pichia_rs.py
 
 # Dual-head fine-tuning (expression MLP + A-site CNN)
 python3 03_finetuning/finetune_dual_head_specialist.py --org ecoli
 python3 03_finetuning/finetune_dual_head_specialist.py --org s_cerevisiae
 python3 03_finetuning/finetune_dual_head_specialist.py --org pichia
-python3 03_finetuning/retrain_bacillus_dualhead_gse249448.py
+python3 03_finetuning/finetune_bacillus_dualhead.py
 ```
 
 ### Stage 04 — Generation

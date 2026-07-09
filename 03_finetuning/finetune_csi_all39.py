@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CT-equivalent CSI fine-tune using ALL 39 organisms in the pre-training corpus.
+CSI fine-tune using ALL 39 organisms in the pre-training corpus.
 
 Speed optimisations vs original:
   - 39 organisms processed in PARALLEL (multiprocessing.Pool, up to 48 workers)

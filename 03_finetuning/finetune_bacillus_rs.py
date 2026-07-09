@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Retrain Bacillus RS model using GSE249448 WT0 (exponential growth).
+B. subtilis RS-FT generator fine-tuning.
 
-Old data: GSE126234 — single condition LB exponential, pre-processed mean (normalized 0-100)
-New data: GSE249448 WT0 — genuine B.subtilis exponential growth, 2 replicates, r=0.934
-          4,332 genes, 2,603 match training CSV (85%)
+Fine-tunes the foundation model (industrial_mlm_ep11.pt) on the top-10% most
+highly expressed B. subtilis genes by Ribo-seq TE (GSE249448 WT0, exponential
+growth, 2 replicates, r=0.934). Produces the B. subtilis codon generation model.
 
-Output: models/industrial_mlm_all39_rs_bacillus.pt (backup → old_models/)
+Output: models/industrial_mlm_all39_rs_bacillus.pt
 """
 
 import sys, math, random, shutil

@@ -1,24 +1,12 @@
 #!/usr/bin/env python3
 """
-Retrain K. phaffii RS-FT generator model from genuine, AOX1-matched Ribo-seq.
+E. coli RS-FT generator fine-tuning.
 
-The original script that produced industrial_mlm_all39_rs_pichia.pt is no
-longer present in this repository (lost during cleanup); only the checkpoint
-survived. This script reconstructs that training step cleanly so the
-pipeline is fully reproducible from source.
+Fine-tunes the foundation model (industrial_mlm_ep11.pt) on the top-10% most
+highly expressed E. coli genes by Ribo-seq TE (PRJNA1335396 + PRJNA906596,
+real in-vivo MG1655 normal growth). Produces the E. coli codon generation model.
 
-Data source: pichia_train.csv, filtered to source == 'riboseq_gse159336'
-(AOX1-driven recombinant expression, the system matched to the K. phaffii
-wet-lab validation in this study). The mmc3 source (incompatible scale,
-identified as contaminated — see project history) and the
-srr32315787_88_normal_growth complement (a different physiological
-condition, not AOX1-induced) are both excluded, matching the same filter
-already used for the K. phaffii dual-head model.
-
-Everything else (architecture, hyperparameters, training procedure) follows
-the same pattern as the E. coli / B. subtilis RS-FT scripts in this repo.
-
-Output: models/industrial_mlm_all39_rs_pichia.pt
+Output: models/industrial_mlm_all39_rs_ecoli.pt
 """
 
 import sys, math, random, shutil
@@ -37,10 +25,9 @@ from train_mlm_industrial import (
 
 BASE    = Path(__file__).resolve().parent.parent
 CKPT_IN = BASE / 'models/industrial_mlm_csi_all39.pt'
-OUT     = BASE / 'models/industrial_mlm_all39_rs_pichia.pt'
-BACKUP  = BASE / 'models/old_models/industrial_mlm_all39_rs_pichia_prev.pt'
+OUT     = BASE / 'models/industrial_mlm_all39_rs_ecoli.pt'
+BACKUP  = BASE / 'models/old_models/industrial_mlm_all39_rs_ecoli_gse190954_cellfree.pt'
 
-ORG          = 'pichia'
 TOP_PCT      = 90
 UNFREEZE     = 4
 MASK_PROB    = 0.15
@@ -58,18 +45,23 @@ STOP_C = {'TAA', 'TAG', 'TGA'}
 PAIR_TO_ID = {(aa, cdn): tid for (aa, cdn), tid in AA_CODON_VOCAB.items()}
 print(f'Device: {DEVICE}')
 
+# ── Backup old (cell-free-selected) model ──────────────────────────────────────
 if OUT.exists():
-    BACKUP.parent.mkdir(exist_ok=True)
+    BACKUP.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(OUT, BACKUP)
-    print(f'Backed up old model -> {BACKUP.name}')
+    print(f'Backed up old model → {BACKUP.name}')
 
-# ── Load genuine AOX1-matched expression ───────────────────────────────────────
-print('\nLoading pichia_train.csv (riboseq_gse159336 only)...')
-df = pd.read_csv(BASE / 'data/raw/pichia/pichia_train.csv')
+# ── Load real in-vivo expression from ecoli_train.csv ─────────────────────────
+print('\nLoading ecoli_train.csv (PRJNA1335396 + PRJNA906596, real in-vivo)...')
+df = pd.read_csv(BASE / 'data/raw/ecoli/ecoli_train.csv')
 df = df.set_index('sequence_id')
-df = df[df['source'] == 'riboseq_gse159336']
+dna_col = 'dna_sequence'
+
+df = df[df.get('source', '') != 'no_expr'] if 'source' in df.columns else df
 df = df.dropna(subset=['expression_level'])
-print(f'  Genes (AOX1-matched, genuine Ribo-seq): {len(df)}')
+print(f'  Genes with expression data: {len(df)} / 2521')
+if 'source' in df.columns:
+    print(f'  Source: {df["source"].value_counts().to_dict()}')
 
 # ── Select top-10% by expression_level ─────────────────────────────────────────
 thresh = df['expression_level'].quantile(TOP_PCT / 100)
@@ -93,8 +85,7 @@ def dna_to_tokens(dna):
         tokens.append(tid)
     return tokens
 
-org_id  = ORG_TO_ID[ORG]
-dna_col = 'dna_sequence'
+org_id  = ORG_TO_ID['ecoli']
 samples = []
 for _, row in df_hi.iterrows():
     toks = dna_to_tokens(str(row[dna_col]))
@@ -132,7 +123,7 @@ loader = DataLoader(CodonDataset(samples), batch_size=BATCH_SIZE,
                     num_workers=2, pin_memory=True)
 print(f'Batches/epoch: {len(loader)}  Epochs: {EPOCHS}  Total steps: {EPOCHS * len(loader):,}')
 
-# ── Model: CSI backbone -> unfreeze last 4 layers ──────────────────────────────
+# ── Model: CSI backbone → unfreeze last 4 layers ───────────────────────────────
 ckpt  = torch.load(CKPT_IN, map_location='cpu', weights_only=False)
 model = IndustrialMLM(use_grad_ckpt=False)
 model.load_state_dict(ckpt['model'])
@@ -185,8 +176,9 @@ for epoch in range(1, EPOCHS + 1):
     if avg < best_loss:
         best_loss = avg
         torch.save({'model': model.state_dict(), 'epoch': epoch,
-                    'loss': avg, 'source': 'riboseq_gse159336_AOX1',
+                    'loss': avg, 'source': 'PRJNA1335396_PRJNA906596_invivo',
                     'n_genes': len(samples)}, OUT)
 
 print(f'\nBest loss: {best_loss:.4f}')
-print(f'Saved -> {OUT}')
+print(f'Saved → {OUT}')
+print(f'Old (cell-free-selected) model backed up → {BACKUP}')

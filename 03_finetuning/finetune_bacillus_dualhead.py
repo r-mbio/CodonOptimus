@@ -1,17 +1,12 @@
 #!/usr/bin/env python3
 """
-Retrain Bacillus dual-head using GSE249448 WT0 (r=0.934, genuine exponential growth).
+B. subtilis dual-head fine-tuning (expression MLP + A-site 1D-CNN).
 
-Old data: GSE126234 LB exponential — OK but limited (no replicates locally, normalized 0-100)
-New data: GSE249448 WT0 — 2 replicates r=0.934, 2,603 matched genes, log-TPM signal
+Fine-tunes expression and A-site prediction heads on B. subtilis Ribo-seq data
+(GSE249448 WT0, 2 replicates, r=0.934). Last 2 transformer layers are unfrozen;
+expression head uses log1p-TPM targets.
 
-Key fixes vs E.coli dual-head attempt:
-  - UNFREEZE=2 (not 4) — fewer params, less overfitting (6.3M vs 14M)
-  - LR=5e-5 (lower) — more stable with small dataset
-  - Log1p transform on TPM — essential for Ribo-seq data
-  - w_asite=0 — Bacillus A-site profiles are 78% unreliable (fixed in session 23)
-
-Output: models/dual_head_pretrain_bacillus.pt (backup → old_models/)
+Output: models/dual_head_pretrain_bacillus.pt
 """
 
 import sys, random, math, shutil
