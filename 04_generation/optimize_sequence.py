@@ -428,6 +428,8 @@ def get_args():
                    help='Nucleus sampling threshold (only used when temperature > 0)')
     p.add_argument('--save_dna',     default=None,
                    help='Save optimized DNA to FASTA file')
+    p.add_argument('--save_report',  default=None,
+                   help='Save metrics and candidate rankings to a CSV file')
     p.add_argument('--device',       default='cuda' if torch.cuda.is_available() else 'cpu')
     return p.parse_args()
 
@@ -585,7 +587,8 @@ def main():
                 'Native', codons_n, tokens_n, org_id, codon_table, dual, device)
 
     # ── Process each protein ───────────────────────────────────────────────────
-    save_seqs = []
+    save_seqs   = []
+    report_rows = []   # for --save_report
     for prot_name, aa_seq in proteins:
         print(f"\n{'─'*60}")
         print(f"Protein: {prot_name}  ({len(aa_seq)} AA)")
@@ -651,6 +654,30 @@ def main():
 
         save_seqs.append((prot_name, opt_dna))
 
+        # Collect rows for report CSV — one row per candidate, all metrics
+        if args.save_report:
+            for rank, cand in enumerate(candidates, 1):
+                dna_r, codons_r, _, tokens_r, codons_r2, csi_r, cfd_r, expr_r = cand
+                gc_r     = calc_gc(codons_r2)
+                mm_r     = get_minmax_mean(codons_r2, codon_table) if codon_table else float('nan')
+                asite_r, _ = predict_dual(dual, tokens_r, org_id, device)
+                n_r      = min(len(asite_r), len(codons_r2))
+                report_rows.append({
+                    'protein':       prot_name,
+                    'organism':      args.org,
+                    'rank':          rank,
+                    'recommended':   'YES' if rank == 1 else 'no',
+                    'expr_score':    round(expr_r, 4)   if not math.isnan(expr_r)  else '',
+                    'csi':           round(csi_r,  4)   if not math.isnan(csi_r)   else '',
+                    'cfd_pct':       round(cfd_r,  2)   if not math.isnan(cfd_r)   else '',
+                    'gc_pct':        round(gc_r,   2)   if not math.isnan(gc_r)    else '',
+                    'minmax':        round(mm_r,   2)   if not math.isnan(mm_r)    else '',
+                    'asite_mean':    round(float(np.mean(asite_r[:n_r])), 4) if n_r > 0 else '',
+                    'asite_std':     round(float(np.std( asite_r[:n_r])), 4) if n_r > 0 else '',
+                    'n_codons':      len(codons_r2),
+                    'dna':           dna_r,
+                })
+
     # ── Save optimized DNA ─────────────────────────────────────────────────────
     if args.save_dna:
         org_label = ORG_LABELS.get(args.org, args.org)
@@ -659,7 +686,19 @@ def main():
                 f.write(f">{name} | CodonOptimus optimized | {org_label}\n")
                 for i in range(0, len(dna), 60):
                     f.write(dna[i:i+60] + '\n')
-        print(f"Saved optimized sequence(s) → {args.save_dna}")
+        print(f"Saved optimized DNA    → {args.save_dna}")
+
+    # ── Save report CSV ────────────────────────────────────────────────────────
+    if args.save_report and report_rows:
+        import csv
+        fields = ['protein', 'organism', 'rank', 'recommended',
+                  'expr_score', 'csi', 'cfd_pct', 'gc_pct', 'minmax',
+                  'asite_mean', 'asite_std', 'n_codons', 'dna']
+        with open(args.save_report, 'w', newline='') as f:
+            w = csv.DictWriter(f, fieldnames=fields)
+            w.writeheader()
+            w.writerows(report_rows)
+        print(f"Saved metrics report   → {args.save_report}  ({len(report_rows)} rows)")
 
 
 if __name__ == '__main__':
