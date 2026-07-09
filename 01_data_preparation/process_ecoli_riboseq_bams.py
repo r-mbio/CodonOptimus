@@ -1,20 +1,8 @@
 #!/usr/bin/env python3
 """
-Update E. coli training CSV with two additional normal-growth Ribo-seq datasets.
-
-DATASETS (already aligned BAMs on disk):
-  - PRJNA1335396 (SRR35650607): MG1655, normal growth, 45M unique reads, 31.5% mapping
-  - PRJNA906596  (SRR22447282): MG1655, pH 7.6 CONTROL from acid stress study = NORMAL GROWTH
-
-Both are aligned to per-gene pseudo-chromosomes (gene IDs = b0002, b0003...).
-Use `samtools idxstats` to get mapped reads per gene.
-
-WHAT THIS DOES:
-  1. Backs up ecoli_train.csv
-  2. Runs samtools idxstats on both BAMs
-  3. Averages counts across the 2 datasets (after normalization)
-  4. Updates expression_level in training CSV
-  5. Marks status in tracking file
+Build E. coli A-site profiles and training CSV from Ribo-seq BAM files.
+Dataset: PRJNA1335396 (SRR35650607) — normal exponential growth.
+Output: data/raw/ecoli/ecoli_train.csv with updated expression columns.
 """
 
 import sys, subprocess, shutil
@@ -47,7 +35,7 @@ BAM_INFO = {
 }
 
 print("=" * 70)
-print("UPDATE E. COLI RIBO-SEQ — NEW NORMAL GROWTH DATASETS")
+print("E. COLI RIBO-SEQ PROCESSING — PRJNA1335396 (NORMAL GROWTH)")
 print("=" * 70)
 
 # ── Step 0: Verify BAMs exist and are indexed ─────────────────────────────────

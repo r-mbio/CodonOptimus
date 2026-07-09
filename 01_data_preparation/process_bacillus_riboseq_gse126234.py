@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Update B. subtilis training CSV with GSE126234 WT (DK1042) Ribo-seq.
-Condition: LB medium, exponential phase OD600=0.3-0.4 — TRUE VEGETATIVE GROWTH.
+Build B. subtilis A-site profiles and training CSV from GSE126234 Ribo-seq.
+Condition: LB medium, exponential phase OD600=0.3-0.4 (WT DK1042 vegetative growth).
 Reference: Caballero et al. 2019, PLOS Genetics.
 
-USE ONLY DK1042 (WT) replicates A, B, C.
-DO NOT USE: DK2050 (Defp), DK5518, DK5955.
+Replicates used: DK1042 (WT) A, B, C only.
+Excluded: DK2050 (Defp), DK5518, DK5955.
 """
 
 import gzip, shutil

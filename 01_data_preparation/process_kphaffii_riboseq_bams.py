@@ -1,16 +1,8 @@
 #!/usr/bin/env python3
 """
-Update K. phaffii training CSV with additional Ribo-seq data.
-Uses existing BAMs in data/bam/pichia/ (SRR32315787 and SRR32315788).
-These are YPD/normal growth K.phaffii Ribo-seq (complement to AOX1-driven GSE159336).
-
-Gene ID mapping: BAM uses AT249_GQ6702256 → training CSV uses GQ67_02256
-  (strip AT249_ prefix, insert _ after GQ67)
-
-GUARDS:
-  - Only add expression data for genes NOT already covered by riboseq_gse159336
-  - Keep gse159336 source for AOX1 genes (wet-lab validated, primary signal)
-  - New source: riboseq_srr32315787_88 (adds YPD vegetative baseline coverage)
+Build K. phaffii A-site profiles and training CSV from Ribo-seq BAM files.
+Dataset: SRR32315787, SRR32315788 — normal exponential growth.
+Output: data/raw/pichia/pichia_train.csv with updated expression columns.
 """
 
 import subprocess, shutil
@@ -34,7 +26,7 @@ BAMS = [
 ]
 
 print("=" * 70)
-print("UPDATE K. PHAFFII RIBO-SEQ — NEW BAMs (NORMAL GROWTH)")
+print("K. PHAFFII RIBO-SEQ PROCESSING — SRR32315787/88 (NORMAL GROWTH)")
 print("=" * 70)
 
 # Verify

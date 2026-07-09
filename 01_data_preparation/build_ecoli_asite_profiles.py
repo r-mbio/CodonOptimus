@@ -1,19 +1,16 @@
 #!/usr/bin/env python3
 """
-Rebuild E. coli A-site occupancy profiles using ONLY genuine in-vivo Ribo-seq data.
+Build E. coli A-site occupancy profiles from genuine in-vivo Ribo-seq BAMs.
 
-Background: the production data/asite_profiles/ecoli/*.npy files were a blend of
-  - GSE190954 (cell-free INRI-seq) — original profile
-  - PRJNA906596 (SRR22447282, SRR22447285) — real Ribo-seq, pH 7.6 control
-  - PRJNA1335396 (SRR35650607) — real Ribo-seq, normal growth
-  - PRJNA376419 (5 Rend-seq runs) — RNA-seq, NOT ribosome footprints;
-    ribosome P/A-site offset correction was incorrectly applied to these
+Datasets used:
+  - PRJNA906596 (SRR22447282, SRR22447285) — Ribo-seq, LB pH 7.6 control
+  - PRJNA1335396 (SRR35650607) — Ribo-seq, normal exponential growth
 
-This script rebuilds from scratch using ONLY the 3 genuine Ribo-seq BAMs,
-discarding both the cell-free and the Rend-seq contributions entirely.
+Excluded (not ribosome footprint data):
+  - GSE190954 — cell-free INRI-seq
+  - PRJNA376419 — Rend-seq (RNA-seq; no ribosome footprint signal)
 
-Output: overwrites data/asite_profiles/ecoli/{locus}.npy (full replacement,
-        not blended with the old contaminated profile).
+Output: data/asite_profiles/ecoli/{locus}.npy
 """
 
 import json, subprocess

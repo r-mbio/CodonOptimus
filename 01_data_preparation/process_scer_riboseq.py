@@ -1,27 +1,9 @@
 #!/usr/bin/env python3
 """
-Update S. cerevisiae training CSV with CORRECT Ribo-seq condition.
-
-PROBLEM: Previously used GSE56622 GLUCOSE STARVATION condition (Ribo-Glu columns).
-FIX: Use NORMAL GROWTH condition (Ribo+Glu columns, WITH glucose, BY4741 strain).
-
-ALSO: Merge in additional WT samples from:
-  - GSE185286: 4 WT replicates (ribo_wt_1 to ribo_wt_4)
-  - GSE185458: 4 WT replicates (ribo_wt_1 to ribo_wt_4)
-
-WHAT THIS DOES:
-  1. Backs up s_cerevisiae_train.csv
-  2. Replaces expression_level from -Glu → +Glu for all genes in GSE56622
-  3. Adds expression_level for genes in GSE185286/185458 not already covered
-  4. Updates source column to reflect correct condition
-
-CRITICAL COLUMN GUARDS:
-  GSE56622 USE: 'Ribo+Glu_RPKM-BY4741 - Replicate 1' and 'Ribo+Glu_RPKM-BY4741 - Replicate 2'
-  GSE56622 DO NOT USE: 'Ribo-Glu_RPKM-BY4741' (starvation)
-  GSE185286 USE: ribo_wt_*.tsv.gz files only (GSM5610137-5610140)
-  GSE185458 USE: ribo_wt_*.tsv.gz files only (GSM5615642-5615645)
+Build S. cerevisiae A-site profiles and training CSV from Ribo-seq data.
+Dataset: GSE102837 — exponential growth (log phase).
+Output: data/raw/s_cerevisiae/s_cerevisiae_train.csv.
 """
-
 import sys, gzip, shutil, json
 from pathlib import Path
 from datetime import date
@@ -38,7 +20,7 @@ TRAIN_CSV = RAW_DIR / 's_cerevisiae_train.csv'
 BACKUP_CSV = RAW_DIR / f's_cerevisiae_train_BACKUP_{date.today():%Y%m%d}.csv'
 
 print("=" * 70)
-print("UPDATE S.CEREVISIAE RIBO-SEQ — CORRECT CONDITIONS")
+print("S. CEREVISIAE RIBO-SEQ PROCESSING — GSE102837 (EXPONENTIAL GROWTH)")
 print("=" * 70)
 
 # ── Step 0: Verify we have the right files ────────────────────────────────────
