@@ -600,19 +600,34 @@ def main():
             tokens_c, codons_c2 = encode_dna(dna_c, args.max_len)
             if tokens_c is None:
                 continue
-            csi_c = calc_csi(codons_c2, codon_table) if codon_table else float('nan')
-            candidates.append((dna_c, codons_c, vaas_c, tokens_c, codons_c2, csi_c))
+            csi_c  = calc_csi(codons_c2, codon_table) if codon_table else float('nan')
+            cfd_c  = get_cfd(codons_c2, codon_table) if codon_table else float('nan')
+            _, expr_c = predict_dual(dual, tokens_c, org_id, device)
+            candidates.append((dna_c, codons_c, vaas_c, tokens_c, codons_c2, csi_c, cfd_c, expr_c))
 
         if not candidates:
             print("  ERROR: failed to generate valid sequence — skipping")
             continue
 
-        # Pick best by CSI (or first if greedy/no table)
-        candidates.sort(key=lambda x: x[5] if not math.isnan(x[5]) else -1,
-                        reverse=True)
-        opt_dna, opt_codons, valid_aas, tokens_o, codons_o, _ = candidates[0]
+        # Rank by ExprScore if dual-head available, else by CSI
+        has_expr = not math.isnan(candidates[0][7])
+        rank_key = (lambda x: x[7]) if has_expr else (lambda x: x[5] if not math.isnan(x[5]) else -1)
+        candidates.sort(key=rank_key, reverse=True)
+
         if n_gen > 1:
-            print(f"  Generated {len(candidates)} sequences — selected best by CSI")
+            rank_by = 'ExprScore' if has_expr else 'CSI'
+            print(f"\n  Ranking {len(candidates)} candidates by {rank_by}:")
+            print(f"  {'Rank':>4}  {'ExprScore':>10}  {'CSI':>6}  {'CFD%':>5}")
+            print(f"  {'-'*36}")
+            for rank, cand in enumerate(candidates, 1):
+                marker = ' ◀ selected' if rank == 1 else ''
+                expr_s = f"{cand[7]:10.4f}" if not math.isnan(cand[7]) else f"{'N/A':>10}"
+                csi_s  = f"{cand[5]:6.3f}"  if not math.isnan(cand[5]) else f"{'N/A':>6}"
+                cfd_s  = f"{cand[6]:5.1f}"  if not math.isnan(cand[6]) else f"{'N/A':>5}"
+                print(f"  {rank:>4}  {expr_s}  {csi_s}  {cfd_s}{marker}")
+            print()
+
+        opt_dna, opt_codons, valid_aas, tokens_o, codons_o, *_ = candidates[0]
 
         # Verify synonymous accuracy (should always be 100% — mask enforced during generation)
         n_err = verify_synonymous(''.join(valid_aas), opt_codons)
