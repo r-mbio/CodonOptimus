@@ -23,12 +23,21 @@ pip install torch>=2.6 numpy pandas scipy scikit-learn biopython \
 ### Step 2 — Download model weights and data
 
 Download the data deposit from **https://doi.org/10.6084/m9.figshare.32847818**
-and unpack it so the repository contains `models/` and `data/` directories
-(see [Data & Models](#data--models) below for the full directory layout).
+and unpack it inside the cloned repository so that `models/` and `data/` sit
+alongside the numbered stage directories (see [Data & Models](#data--models) for
+the full layout).
 
-At minimum, for sequence generation you need:
+**The script selects models automatically based on `--org`:**
+
+| Organism | Generator used | Expression scoring |
+|---|---|---|
+| `ecoli`, `bacillus`, `pichia` | Ribo-seq fine-tuned RS-FT model (`industrial_mlm_all39_rs_<org>.pt`) | Dual-head model (`dual_head_*_<org>.pt`) |
+| `s_cerevisiae` | CSI fine-tuned model (`industrial_mlm_csi_all39.pt`) | Dual-head model (`dual_head_pretrain_s_cerevisiae.pt`) |
+| All other 35 organisms | CSI fine-tuned model (`industrial_mlm_csi_all39.pt`) | Not available (CSI/CFD only) |
+
+At minimum for generation you need:
 - `models/industrial_mlm_csi_all39.pt` — generator for all 39 organisms
-- `models/industrial_mlm_all39_rs_{ecoli,bacillus,pichia}.pt` — Ribo-seq fine-tuned generators
+- `models/industrial_mlm_all39_rs_{ecoli,bacillus,pichia}.pt` — RS-FT generators (E. coli, B. subtilis, K. phaffii)
 - `models/dual_head_{ep11,pretrain}_{ecoli,bacillus,pichia,s_cerevisiae}.pt` — expression predictors
 - `data/codon_tables/` — codon usage tables (for CSI/CFD metrics)
 
@@ -52,6 +61,14 @@ python3 04_generation/optimize_sequence.py \
     --org ecoli \
     --n_seqs 100 \
     --temperature 0.3
+
+# Save a full ranked report (all candidates, all metrics) to CSV
+python3 04_generation/optimize_sequence.py \
+    --fasta examples/benchmark_proteins.faa \
+    --org pichia \
+    --n_seqs 10 \
+    --save_dna pichia_optimised.fna \
+    --save_report pichia_report.csv
 ```
 
 **Output per sequence:** optimised CDS, CSI, CFD%, %MinMax, GC%, predicted
@@ -237,15 +254,13 @@ python3 01_data_preparation/download_industrial_cds.py
 # Build normalised Ribo-seq expression targets
 python3 01_data_preparation/normalize_all_riboseq_tpm.py
 
-# Build E. coli A-site profiles from genuine in-vivo Ribo-seq BAMs
-# (BAMs must be downloaded from SRA: SRR35650607, SRR22447282, SRR22447285)
-python3 01_data_preparation/rebuild_ecoli_asite_genuine_riboseq.py
-
-# Similarly for other organisms:
-python3 01_data_preparation/update_bacillus_riboseq_gse126234.py
-python3 01_data_preparation/update_kphaffii_riboseq_newbams.py
-python3 01_data_preparation/update_scer_riboseq_correct_condition.py
-python3 01_data_preparation/update_ecoli_riboseq_new_bams.py
+# Build A-site profiles and expression targets from Ribo-seq BAMs
+# (BAMs must be downloaded from SRA — accessions listed in each script's docstring)
+python3 01_data_preparation/build_ecoli_asite_profiles.py
+python3 01_data_preparation/process_ecoli_riboseq_bams.py
+python3 01_data_preparation/process_bacillus_riboseq_gse126234.py
+python3 01_data_preparation/process_kphaffii_riboseq_bams.py
+python3 01_data_preparation/process_scer_riboseq.py
 ```
 
 ### Stage 02 — Foundation pretraining
