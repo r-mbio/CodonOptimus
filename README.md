@@ -11,40 +11,64 @@ optimisation with ribosome-profiling supervision and experimental validation"**
 
 ## Quick start — optimise a protein sequence
 
+### Step 1 — Clone and install
+
 ```bash
-# 1. Clone and install dependencies (see Requirements below)
 git clone https://github.com/r-mbio/CodonOptimus.git
 cd CodonOptimus
+pip install torch>=2.6 numpy pandas scipy scikit-learn biopython \
+            python-codon-adaptation-index ViennaRNA openpyxl
+```
 
-# 2. Download model weights and reference data (see Data & Models below)
+### Step 2 — Download model weights and data
 
-# 3a. Optimise a single sequence inline
+Download the data deposit from **https://doi.org/10.6084/m9.figshare.32847818**
+and unpack it so the repository contains `models/` and `data/` directories
+(see [Data & Models](#data--models) below for the full directory layout).
+
+At minimum, for sequence generation you need:
+- `models/industrial_mlm_csi_all39.pt` — generator for all 39 organisms
+- `models/industrial_mlm_all39_rs_{ecoli,bacillus,pichia}.pt` — Ribo-seq fine-tuned generators
+- `models/dual_head_{ep11,pretrain}_{ecoli,bacillus,pichia,s_cerevisiae}.pt` — expression predictors
+- `data/codon_tables/` — codon usage tables (for CSI/CFD metrics)
+
+### Step 3 — Generate an optimised coding sequence
+
+```bash
+# Single amino acid sequence → optimised CDS for E. coli
 python3 04_generation/optimize_sequence.py \
     --aa_seq MKVLATVFLAVSAAVNG \
     --org ecoli
 
-# 3b. Optimise a FASTA file with multiple proteins, saving the optimised DNA
+# FASTA file with multiple proteins → save optimised DNA sequences
 python3 04_generation/optimize_sequence.py \
     --fasta examples/benchmark_proteins.faa \
     --org pichia \
     --save_dna pichia_optimised.fna
+
+# Generate N candidates, keep the one with highest expression score
+python3 04_generation/optimize_sequence.py \
+    --aa_seq MKVLATVFLAVSAAVNG \
+    --org ecoli \
+    --n_seqs 100 \
+    --temperature 0.3
 ```
 
-Example FASTA files are provided in `examples/`:
+**Output per sequence:** optimised CDS, CSI, CFD%, %MinMax, GC%, predicted
+expression score, and per-codon A-site occupancy profile.
+Expression score and A-site profile are available for organisms with dual-head
+models: E. coli, B. subtilis, K. phaffii, S. cerevisiae.
+
+**Synonymous guarantee:** every predicted codon is hard-constrained to encode
+the correct amino acid — verified post-generation with a `RuntimeError` if any
+mismatch occurs, so incorrect output is impossible to miss.
+
+Example FASTA files for a quick test:
 
 | File | Contents |
 |---|---|
-| `examples/benchmark_proteins.faa` | 4 benchmark proteins (BLG, HSA, PHYA, XYN2) — the proteins used in the paper |
+| `examples/benchmark_proteins.faa` | 4 benchmark proteins (BLG, HSA, PHYA, XYN2) used in the paper |
 | `examples/quick_test.faa` | 3 short sequences (6–31 AA) for a fast smoke test |
-
-**Output per sequence:** optimised CDS, CSI, CFD%, %MinMax, GC%, predicted expression
-score, and per-codon A-site occupancy profile (last two only for organisms with
-dual-head models: E. coli, B. subtilis, K. phaffii, S. cerevisiae).
-
-**Synonymous guarantee:** the model hard-constrains every predicted codon to encode
-the correct amino acid before argmax/sampling — AA-level alignment is enforced by
-construction and verified post-generation (raises `RuntimeError` on any mismatch,
-so incorrect output is impossible to miss).
 
 All 39 supported organism keys (training data spans all publicly available
 assemblies of the taxon; organisms with Ribo-seq supervision are marked †; ‡ = Ribo-seq feeds dual-head model only, not the sequence generator):
