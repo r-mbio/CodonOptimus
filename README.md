@@ -337,20 +337,4 @@ Pre-generated sequences for each tool are deposited in `other_optimizers/` (see 
 ---
 
 ## Citation
-
-```
-Sathyamoorthy R. et al. (2026). CodonOptimus: a ribosome-profiling-supervised
-foundation model for codon optimisation and recombinant protein production in
-microbial cell factories. (manuscript under review)
-```
-
----
-
-## Licence
-
-CodonOptimus is released under the **PolyForm Noncommercial License 1.0.0** (see
-[LICENSE](LICENSE)).
-
-- **Academic and non-profit research:** free to use, modify, and distribute.
-- **Commercial use** (for-profit companies, commercial products or services):
-  contact M.Puri@massey.ac.nz for licensing.
+Under review
